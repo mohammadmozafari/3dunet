@@ -1,0 +1,55 @@
+---
+version: 1
+
+kind: experiment
+framework: pytorch
+
+build:
+  image: pytorch/pytorch:1.7.0-cuda11.0-cudnn8-runtime
+  build_steps:
+    - apt update
+    - apt install -y build-essential
+    - apt install ffmpeg libsm6 libxext6  -y
+    - apt install -y libglib2.0-0 libsm6 libxext6 libxrender-dev git
+    - pip install voxelmorph
+    - pip install neurite
+    - pip install tensorflow
+    - pip install opencv-contrib-python
+    - pip install -U polyaxon-client
+    - pip install tqdm
+  env_vars:
+    - ['TORCH_HOME', "/data/PytorchModelZoo"]
+
+
+
+environment:
+  node_selector:
+    gpuMemory: "24"
+  resources: 
+    cpu: 
+      limits: 4
+      requests: 3
+    gpu: 
+      limits: 1
+      requests: 1
+    memory: 
+      limits: 32000
+      requests: 20000
+
+params:
+  Normalization: True
+  epochs: 500
+  batch_size: 1
+  augment_count: 0
+  image_shape: (256,256)
+  image_slices: 128 
+
+run:
+  cmd: python -u run.py
+
+
+tags:
+  - Semi_liver
+  - 128_256_256_pixel
+
+
